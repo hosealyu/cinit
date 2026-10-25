@@ -1,0 +1,4 @@
+cc_binary(
+    name = "@EXECUTABLE_NAME@",
+    srcs = ["main.c"],
+)
