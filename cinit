@@ -9,11 +9,13 @@ requested_build_tool=""
 requested_target=""
 build_tool_provided=false
 target_provided=false
+initialize_git=true
 
 usage() {
-  printf 'Usage: %s [--build-tool ID] [--target PATH]\n' "${0##*/}"
+  printf 'Usage: %s [--build-tool ID] [--target PATH] [--no-git]\n' "${0##*/}"
   printf '  --build-tool ID  Select an installed build system (make, cmake, bazel, meson)\n'
   printf '  --target PATH    Create the project at PATH; use . for the current directory\n'
+  printf '  --no-git         Skip initializing a Git repository\n'
   printf '  -h, --help       Show this help\n'
 }
 
@@ -38,6 +40,10 @@ while (($# > 0)); do
       requested_target="$2"
       target_provided=true
       shift 2
+      ;;
+    --no-git)
+      initialize_git=false
+      shift
       ;;
     -h|--help)
       usage
@@ -177,7 +183,7 @@ if [[ -e "$destination" ]]; then
 fi
 
 template_dir="$TEMPLATE_ROOT/${ids[$selection]}"
-if [[ ! -d "$template_dir" || ! -f "$TEMPLATE_ROOT/common/main.c" ]]; then
+if [[ ! -d "$template_dir" || ! -f "$TEMPLATE_ROOT/common/main.c" || ! -f "$TEMPLATE_ROOT/common/.gitignore" ]]; then
   printf 'Error: scaffold templates are missing for %s.\n' "${labels[$selection]}" >&2
   exit 1
 fi
@@ -204,9 +210,21 @@ else
 fi
 
 cp -- "$TEMPLATE_ROOT/common/main.c" "$destination/main.c"
+sed "s/@EXECUTABLE_NAME@/$executable_name/g" "$TEMPLATE_ROOT/common/.gitignore" > "$destination/.gitignore"
 for template in "$template_dir"/*; do
   [[ -f "$template" ]] || continue
   sed "s/@EXECUTABLE_NAME@/$executable_name/g" "$template" > "$destination/$(basename -- "$template")"
 done
+
+if [[ "$initialize_git" == true ]]; then
+  if ! command -v git >/dev/null 2>&1; then
+    printf 'Error: Git is not installed; skipping Git repository initialization.\n' >&2
+  elif ! git -C "$destination" init -q; then
+    printf 'Error: project files were created, but Git repository initialization failed in %s.\n' "$destination" >&2
+    exit 1
+  else
+    printf 'Initialized a Git repository.\n'
+  fi
+fi
 
 printf 'Created a %s C project in %s (executable: %s)\n' "${labels[$selection]}" "$destination" "$executable_name"

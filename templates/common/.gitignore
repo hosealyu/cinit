@@ -1,0 +1,4 @@
+/@EXECUTABLE_NAME@
+/build/
+/bazel-*
+*.o
