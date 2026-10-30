@@ -183,7 +183,12 @@ if [[ -e "$destination" ]]; then
 fi
 
 template_dir="$TEMPLATE_ROOT/${ids[$selection]}"
-if [[ ! -d "$template_dir" || ! -f "$TEMPLATE_ROOT/common/main.c" || ! -f "$TEMPLATE_ROOT/common/.gitignore" ]]; then
+if [[ ! -d "$template_dir" ||
+  ! -f "$TEMPLATE_ROOT/common/src/main.c" ||
+  ! -f "$TEMPLATE_ROOT/common/src/hello.c" ||
+  ! -f "$TEMPLATE_ROOT/common/include/hello.h" ||
+  ! -f "$TEMPLATE_ROOT/common/tests/test_hello.c" ||
+  ! -f "$TEMPLATE_ROOT/common/.gitignore" ]]; then
   printf 'Error: scaffold templates are missing for %s.\n' "${labels[$selection]}" >&2
   exit 1
 fi
@@ -209,7 +214,7 @@ else
   fi
 fi
 
-cp -- "$TEMPLATE_ROOT/common/main.c" "$destination/main.c"
+cp -R -- "$TEMPLATE_ROOT/common/src" "$TEMPLATE_ROOT/common/include" "$TEMPLATE_ROOT/common/tests" "$destination/"
 sed "s/@EXECUTABLE_NAME@/$executable_name/g" "$TEMPLATE_ROOT/common/.gitignore" > "$destination/.gitignore"
 for template in "$template_dir"/*; do
   [[ -f "$template" ]] || continue

@@ -1,4 +1,5 @@
 /@EXECUTABLE_NAME@
+/test-@EXECUTABLE_NAME@
 /build/
 /bazel-*
 *.o

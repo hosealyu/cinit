@@ -5,9 +5,10 @@ Run these commands from the project directory:
 ```sh
 make
 ./@EXECUTABLE_NAME@
+make test
 ```
 
-`make` compiles `main.c` into the `@EXECUTABLE_NAME@` executable using the system C compiler. To remove the executable, run:
+`make test` builds and runs the starter test using the standard C `assert` macro. To remove the executables, run:
 
 ```sh
 make clean

@@ -1,4 +1,18 @@
+cc_library(
+    name = "hello",
+    srcs = ["src/hello.c"],
+    hdrs = ["include/hello.h"],
+    includes = ["include"],
+)
+
 cc_binary(
     name = "@EXECUTABLE_NAME@",
-    srcs = ["main.c"],
+    srcs = ["src/main.c"],
+    deps = [":hello"],
+)
+
+cc_test(
+    name = "hello_test",
+    srcs = ["tests/test_hello.c"],
+    deps = [":hello"],
 )

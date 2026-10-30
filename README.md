@@ -29,14 +29,14 @@ The script checks for the supported tools and offers the installed options:
 
 It then asks for a project directory name. Enter `.` to create the files in the current directory. Otherwise, the directory is created under the current directory. The destination must not contain files; the script refuses to overwrite existing content. If no supported build system is installed, the script exits with installation guidance.
 
-Generated projects include `main.c`, `.gitignore`, a `README.md` with instructions for the selected build system, and only that system's configuration files:
+Generated projects include `src/main.c`, a small `src/hello.c` component with its public header in `include/hello.h`, a `tests/test_hello.c` starter test using standard C `assert`, `.gitignore`, and a `README.md` with instructions for the selected build system:
 
 | Build system | Generated files | Example build/run |
 | --- | --- | --- |
-| Make | `Makefile`, `README.md` | `make && ./<executable-name>` |
-| CMake | `CMakeLists.txt`, `README.md` | `cmake -S . -B build && cmake --build build && ./build/<executable-name>` |
-| Bazel | `MODULE.bazel`, `BUILD.bazel`, `README.md` | `bazel run //:<executable-name>` |
-| Meson | `meson.build`, `README.md` | `meson setup build && meson compile -C build && ./build/<executable-name>` |
+| Make | `Makefile`, `README.md` | `make && ./<executable-name>`; tests: `make test` |
+| CMake | `CMakeLists.txt`, `README.md` | `cmake -S . -B build && cmake --build build && ./build/<executable-name>`; tests: `ctest --test-dir build --output-on-failure` |
+| Bazel | `MODULE.bazel`, `BUILD.bazel`, `README.md` | `bazel run //:<executable-name>`; tests: `bazel test //:hello_test` |
+| Meson | `meson.build`, `README.md` | `meson setup build && meson compile -C build && ./build/<executable-name>`; tests: `meson test -C build` |
 
 The C compiler is expected to be available separately. If Git is not installed, Cinit prints an error message and continues without initializing a repository. Use `--no-git` to skip Git initialization without a message.
 The executable name is derived from the destination directory name, normalized to lowercase letters, digits, and hyphens. For `--target .`, the default executable name is `hello-world`.
@@ -50,4 +50,4 @@ Build-system options are listed in `build-systems.conf` as tab-separated fields:
 id<TAB>display name<TAB>command candidates separated by |
 ```
 
-Add one registry row with a unique ID, a user-facing label, and one or more executable names to detect. Then add a directory at `templates/<id>/` containing the build configuration files and a `README.md` with build/run instructions to copy into the generated project. The common files in `templates/common/` are copied for every option. Keep template names as the filenames you want users to receive.
+Add one registry row with a unique ID, a user-facing label, and one or more executable names to detect. Then add a directory at `templates/<id>/` containing build and test configuration plus a `README.md` with build/run/test instructions to copy into the generated project. The common files and folders in `templates/common/` are copied for every option. Keep template names as the filenames you want users to receive.
