@@ -42,6 +42,16 @@ The C compiler is expected to be available separately. If Git is not installed, 
 The executable name is derived from the destination directory name, normalized to lowercase letters, digits, and hyphens. For `--target .`, the default executable name is `hello-world`.
 Each generated project includes a `.gitignore` for its executable, common build output, and object files.
 
+## Smoke test
+
+Run the repository smoke test to verify the generator still creates a project and that the generated Make project builds and passes its starter test:
+
+```sh
+bash tests/smoke.sh
+```
+
+The test creates a temporary project with `--build-tool make --target ... --no-git`, verifies the expected files exist, runs `make` and `make test`, and checks that the executable prints `Hello, world!`.
+
 ## Adding a build system
 
 Build-system options are listed in `build-systems.conf` as tab-separated fields:
